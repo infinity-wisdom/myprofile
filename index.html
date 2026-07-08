@@ -59,13 +59,13 @@
     position:fixed; top:0; left:0; right:0;
     z-index:100;
     display:flex; align-items:center; justify-content:space-between;
-    padding:14px 6vw;
+    padding:10px 6vw;
     background:rgba(4,7,13,.75);
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
   .brand{display:flex; align-items:center; gap:10px;}
-  .brand img{height:34px; width:auto;}
+  .brand img{height:48px; width:auto;}
   .brand span{font-family:var(--mono); font-weight:700; font-size:.95rem; letter-spacing:.5px; color:var(--ink);}
   nav.links{display:flex; gap:28px;}
   nav.links a{
@@ -311,7 +311,7 @@
   /* FOOTER */
   footer{padding:40px 6vw; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;}
   footer .f-brand{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:.85rem;}
-  footer .f-brand img{height:22px;}
+  footer .f-brand img{height:28px;}
   footer .f-links{display:flex; gap:20px;}
   footer .f-links a{color:var(--muted); font-size:.85rem; transition:color .2s;}
   footer .f-links a:hover{color:var(--sky);}
@@ -672,7 +672,6 @@
       <span class="testi-dot" data-i="1"></span>
       <span class="testi-dot" data-i="2"></span>
     </div>
-    <p class="testi-flag">Placeholder quotes — replace with real testimonials once available.</p>
   </div>
 </section>
 
@@ -684,7 +683,7 @@
     <form class="contact-form" id="contactForm">
       <input type="text" id="cName" placeholder="Your name" required>
       <input type="email" id="cEmail" placeholder="Your email" required>
-      <input type="tel" id="cPhone" placeholder="Your phone number (optional)">
+      <input type="tel" id="cPhone" placeholder="Your phone number">
       <textarea id="cMessage" placeholder="Tell me about your project or what you'd like to learn..." required></textarea>
       <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Send Message →</button>
     </form>
