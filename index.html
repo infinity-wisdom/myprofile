@@ -132,7 +132,28 @@
   }
   .btn-secondary:hover{border-color:var(--sky); background:rgba(56,189,248,.06);}
 
+  .hero-visuals{display:flex; flex-direction:column; gap:26px; align-items:center;}
+  .profile-frame{
+    position:relative;
+    width:190px; height:190px; border-radius:50%;
+    padding:5px;
+    background:conic-gradient(from 0deg, var(--sky), var(--royal), var(--deep), var(--sky));
+    animation:spin 8s linear infinite;
+    box-shadow:0 0 40px rgba(56,189,248,.35);
+  }
+  .profile-frame img{
+    width:100%; height:100%; border-radius:50%; object-fit:cover;
+    border:4px solid var(--void);
+    animation:spinBack 8s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @keyframes spinBack{ to{ transform:rotate(-360deg); } }
+  @media (prefers-reduced-motion: reduce){
+    .profile-frame, .profile-frame img{animation:none;}
+  }
+
   .terminal{
+    width:100%;
     background:var(--panel); border:1px solid var(--line); border-radius:12px;
     box-shadow:0 30px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(56,189,248,.05);
     overflow:hidden;
@@ -213,9 +234,15 @@
   }
   .project-card:hover{transform:translateY(-6px); border-color:var(--sky);}
   .project-thumb{
-    height:140px; background:linear-gradient(135deg, var(--deep), var(--panel-2));
+    height:150px; background-color:var(--panel-2);
+    background-size:cover; background-position:center;
     display:flex; align-items:center; justify-content:center; font-family:var(--mono); color:var(--sky); font-size:.8rem;
     border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .project-thumb::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 60%, rgba(4,7,13,.55) 100%);
   }
   .project-card .content{padding:20px;}
   .project-card h4{font-family:var(--mono); font-size:1rem; margin-bottom:8px;}
@@ -300,6 +327,41 @@
   .reveal{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease;}
   .reveal.visible{opacity:1; transform:translateY(0);}
 
+  /* MODAL */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(4,7,13,.82); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center; z-index:200;
+    opacity:0; pointer-events:none; transition:opacity .3s;
+    padding:20px;
+  }
+  .modal-overlay.open{opacity:1; pointer-events:auto;}
+  .modal-box{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:36px;
+    max-width:560px; width:100%; position:relative;
+    transform:translateY(20px); transition:transform .3s;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+  }
+  .modal-overlay.open .modal-box{transform:translateY(0);}
+  .modal-close{
+    position:absolute; top:16px; right:16px; background:none; border:1px solid var(--line);
+    color:var(--muted); width:34px; height:34px; border-radius:8px; cursor:pointer; font-size:1.3rem; line-height:1;
+    transition:border-color .2s, color .2s;
+  }
+  .modal-close:hover{border-color:var(--sky); color:var(--sky);}
+
+  /* PRESS CAROUSEL */
+  .press-carousel{position:relative; height:220px; border-radius:10px; overflow:hidden; border:1px solid var(--line); background:var(--panel);}
+  .press-slide{
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+  }
+  .press-slide.active{display:flex; animation:fadeIn .5s ease;}
+  .press-slide img{width:100%; height:100%; object-fit:contain; background:var(--panel-2);}
+  .press-placeholder{
+    color:var(--muted); font-family:var(--mono); font-size:.82rem; text-align:center;
+  }
+  .press-dots{display:flex; gap:8px; margin-top:12px;}
+  .press-dots .testi-dot{width:7px; height:7px;}
+
   @media (max-width:900px){
     .hero-grid, .about-grid, .services-grid, .contact-grid, .creds-grid{grid-template-columns:1fr;}
     .skills-grid{grid-template-columns:1fr 1fr;}
@@ -354,14 +416,19 @@
         <a href="#portfolio" class="btn-secondary">View My Work</a>
       </div>
     </div>
-    <div class="terminal reveal">
-      <div class="terminal-bar">
-        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-        <span class="terminal-title">codecave — wisdom@arimie</span>
+    <div class="hero-visuals reveal">
+      <div class="profile-frame">
+        <img src="assets/profile.png" alt="Wisdom Arimie">
       </div>
-      <div class="terminal-body">
-        <div class="line"><span class="prompt">wisdom@codecave</span> ~ % <span id="typed"></span><span class="cursor">&nbsp;</span></div>
-        <div class="line out" id="typedOut" style="display:none;"></div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="terminal-title">codecave — wisdom@arimie</span>
+        </div>
+        <div class="terminal-body">
+          <div class="line"><span class="prompt">wisdom@codecave</span> ~ % <span id="typed"></span><span class="cursor">&nbsp;</span></div>
+          <div class="line out" id="typedOut" style="display:none;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -465,11 +532,10 @@
     <div class="skill-card reveal">
       <h4>Certifications</h4>
       <ul class="cert-list">
-        <li>AI-Assisted Development — <em>[Add provider]</em></li>
-        <li>Full Stack Web Development — <em>[Add provider]</em></li>
-        <li>Applied Prompt Engineering — <em>[Add provider]</em></li>
+        <li>AI-Assisted Development — <em>Google</em></li>
+        <li>Full Stack Web Development — <em>Loveworld Nest Academy</em></li>
+        <li>Applied Prompt Engineering — <em>Udemy</em></li>
       </ul>
-      <p class="cert-note">Placeholder entries — swap in your actual certifications.</p>
     </div>
   </div>
 </section>
@@ -480,34 +546,49 @@
   <p class="section-intro">A space reserved for your projects and teaching highlights. Placeholder cards below — send over real details (name, description, tech, link) and I'll swap them in.</p>
   <div class="portfolio-grid">
     <div class="project-card reveal">
-      <div class="project-thumb">&lt;/&gt; project.01</div>
+      <div class="project-thumb" style="background-image:url('assets/excel-in-school.jpg');"></div>
       <div class="content">
-        <h4>[Project Name]</h4>
-        <p>A short one-line description of the problem this project solved.</p>
-        <div class="stack"><span>React</span><span>Node.js</span></div>
-        <a href="#" class="btn-secondary" style="padding:8px 16px; font-size:.8rem; display:inline-block;">View Project</a>
+        <h4>Excel in School</h4>
+        <p>A student support platform/community helping undergraduates with tutorials, scholarships, mentorships, and entrepreneurship.</p>
+        <div class="stack"><span>Community Platform</span><span>Education</span></div>
+        <a href="https://excelinschool.com" target="_blank" class="btn-secondary" style="padding:8px 16px; font-size:.8rem; display:inline-block;">View Project</a>
       </div>
     </div>
     <div class="project-card reveal">
-      <div class="project-thumb">&lt;/&gt; project.02</div>
+      <div class="project-thumb" style="background-image:url('assets/ogoloma-library.jpg');"></div>
       <div class="content">
-        <h4>[Project Name]</h4>
-        <p>A short one-line description of the problem this project solved.</p>
-        <div class="stack"><span>Django</span><span>PostgreSQL</span></div>
-        <a href="#" class="btn-secondary" style="padding:8px 16px; font-size:.8rem; display:inline-block;">View Project</a>
+        <h4>Ogoloma Library</h4>
+        <p>A platform to access academic resources, books, and journals to support your research and learning journey.</p>
+        <div class="stack"><span>Digital Library</span><span>Research Tools</span></div>
+        <a href="https://infinity-wisdom.github.io/ogoloma-library/" target="_blank" class="btn-secondary" style="padding:8px 16px; font-size:.8rem; display:inline-block;">View Project</a>
       </div>
     </div>
     <div class="project-card reveal">
-      <div class="project-thumb">&#9679; workshop.01</div>
+      <div class="project-thumb" style="background-image:url('assets/workshop-ai.jpg');"></div>
       <div class="content">
-        <h4>AI Utility Workshop — [Topic]</h4>
-        <p>Hands-on session teaching students practical AI use cases.</p>
-        <div class="stack"><span>~40 attendees</span></div>
-        <a href="#" class="btn-secondary" style="padding:8px 16px; font-size:.8rem; display:inline-block;">Details</a>
+        <h4>Code-with-AI Marathon</h4>
+        <p>An ongoing empowerment program to impact 5,000 students with AI coding and utility skills. 25 students impacted so far.</p>
+        <div class="stack"><span>25 / 5,000 impacted</span></div>
+        <button class="btn-secondary" style="padding:8px 16px; font-size:.8rem; display:inline-block; border:1px solid var(--line); cursor:pointer; font-family:var(--body); background:none; color:var(--ink);" onclick="openModal()">Details</button>
       </div>
     </div>
   </div>
 </section>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="eyebrow">Workshop</div>
+    <h2 style="margin-bottom:16px;">Code-with-AI Marathon</h2>
+    <p style="color:var(--muted); margin-bottom:16px;">The Code-with-AI Marathon is an ongoing empowerment program built to equip 5,000 students with practical AI coding and utility skills — from writing their first lines of code to using AI tools to build real projects, faster.</p>
+    <p style="color:var(--muted); margin-bottom:16px;">So far, <strong style="color:var(--sky);">25 students</strong> have gone through the program, learning how to pair traditional development skills with AI-assisted workflows.</p>
+    <p style="color:var(--muted); margin-bottom:28px;">Interested in joining, partnering, or just have questions? Reach out below.</p>
+    <div class="hero-ctas">
+      <a href="https://wa.me/2348104256566" target="_blank" class="btn-primary">WhatsApp Me →</a>
+      <a href="mailto:arimiewisdom@gmail.com?subject=Code-with-AI%20Marathon%20Enquiry" class="btn-secondary">Email Me</a>
+    </div>
+  </div>
+</div>
 
 <section id="experience">
   <div class="eyebrow">Experience &amp; Credentials</div>
@@ -522,16 +603,16 @@
           <p>Building AI-integrated web products while running training sessions on practical AI use.</p>
         </div>
         <div class="t-item reveal">
-          <div class="role">[Add Role]</div>
-          <div class="org">[Add Company]</div>
-          <div class="period">[Add Years]</div>
-          <p>Placeholder for a past role — add a short description of your responsibilities.</p>
+          <div class="role">Senior Front-End Developer</div>
+          <div class="org">Icreatit Brand</div>
+          <div class="period">2024 — Present</div>
+          <p>Helping build the company's web/app products and community.</p>
         </div>
         <div class="t-item reveal">
-          <div class="role">[Add Role]</div>
-          <div class="org">[Add Company]</div>
-          <div class="period">[Add Years]</div>
-          <p>Placeholder for a past role — add a short description of your responsibilities.</p>
+          <div class="role">IT Support / Instructor</div>
+          <div class="org">Gesemville International Academy</div>
+          <div class="period">2018 — 2020</div>
+          <p>Taught over 50 pupils relevant ICT skills using modern platforms.</p>
         </div>
       </div>
     </div>
@@ -548,8 +629,20 @@
           <span class="client-pill">Icreatit Brand</span>
         </div>
       </div>
-      <div class="press-note reveal">
-        Space reserved for speaking engagements, published courses, or media features. Add these as they come.
+      <div class="reveal">
+        <div class="label" style="font-family:var(--mono); font-size:.75rem; color:var(--sky); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px;">Media &amp; Features</div>
+        <div class="press-carousel" id="pressCarousel">
+          <div class="press-slide active">
+            <img src="assets/press-1.jpg" alt="Code with AI workshop flyer, August edition">
+          </div>
+          <div class="press-slide">
+            <img src="assets/press-2.jpg" alt="Team photo in Icreatit Brand shirts">
+          </div>
+          <div class="press-slide">
+            <img src="assets/press-3.png" alt="CodeCave Inc. logo">
+          </div>
+        </div>
+        <div class="press-dots" id="pressDots"></div>
       </div>
     </div>
   </div>
@@ -561,17 +654,17 @@
   <div class="testi-wrap reveal">
     <div class="testi-slide active">
       <p class="testi-quote">"Wisdom broke AI down in a way that finally made sense to me. I went from being scared of it to actually using it every day."</p>
-      <div class="testi-author">[Student Name]</div>
+      <div class="testi-author">Chidiebere O.</div>
       <div class="testi-role">Workshop Participant</div>
     </div>
     <div class="testi-slide">
       <p class="testi-quote">"He shipped our MVP faster than we expected, without cutting corners on quality. Great communicator throughout."</p>
-      <div class="testi-author">[Client Name]</div>
+      <div class="testi-author">Precious S.</div>
       <div class="testi-role">Startup Founder</div>
     </div>
     <div class="testi-slide">
       <p class="testi-quote">"Patient, clear, and practical. The kind of instructor who makes you actually want to keep learning."</p>
-      <div class="testi-author">[Student Name]</div>
+      <div class="testi-author">Praise N.</div>
       <div class="testi-role">1-on-1 Coaching Client</div>
     </div>
     <div class="testi-dots">
@@ -591,6 +684,7 @@
     <form class="contact-form" id="contactForm">
       <input type="text" id="cName" placeholder="Your name" required>
       <input type="email" id="cEmail" placeholder="Your email" required>
+      <input type="tel" id="cPhone" placeholder="Your phone number (optional)">
       <textarea id="cMessage" placeholder="Tell me about your project or what you'd like to learn..." required></textarea>
       <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">Send Message →</button>
     </form>
@@ -743,14 +837,41 @@
     });
   });
 
+  // Workshop modal
+  const modalOverlay = document.getElementById('modalOverlay');
+  function openModal(){ modalOverlay.classList.add('open'); }
+  function closeModal(){ modalOverlay.classList.remove('open'); }
+  modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+  // Press auto-carousel
+  const pressSlides = document.querySelectorAll('.press-slide');
+  const pressDotsWrap = document.getElementById('pressDots');
+  pressSlides.forEach((_, idx) => {
+    const dot = document.createElement('span');
+    dot.className = 'testi-dot' + (idx === 0 ? ' active' : '');
+    dot.addEventListener('click', () => showPress(idx));
+    pressDotsWrap.appendChild(dot);
+  });
+  const pressDots = pressDotsWrap.querySelectorAll('.testi-dot');
+  let pi = 0;
+  function showPress(i){
+    pressSlides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    pressDots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+    pi = i;
+  }
+  setInterval(() => showPress((pi + 1) % pressSlides.length), 4500);
+
   // Contact form -> mailto
   document.getElementById('contactForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('cName').value;
     const email = document.getElementById('cEmail').value;
+    const phone = document.getElementById('cPhone').value;
     const message = document.getElementById('cMessage').value;
     const subject = encodeURIComponent('Project Inquiry from ' + name);
-    const body = encodeURIComponent(message + '\n\n— ' + name + ' (' + email + ')');
+    const phoneLine = phone ? ('\nPhone: ' + phone) : '';
+    const body = encodeURIComponent(message + '\n\n— ' + name + ' (' + email + ')' + phoneLine);
     window.location.href = `mailto:arimiewisdom@gmail.com?subject=${subject}&body=${body}`;
   });
 </script>
